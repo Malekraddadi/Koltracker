@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KOLTracker">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons for home screen -->
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    
+    <title>KOLTracker - Mobile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Pull-to-refresh indicator -->
+    <div id="pullToRefresh" class="ptr-indicator">
+        <span id="ptrArrow">↓</span>
+        <span id="ptrText">Pull to refresh</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>KOLTracker</h1>
+            <p class="subtitle">Real-time KOL Token Tracker</p>
+            <button id="refreshBtn" class="refresh-btn">
+                <span id="refreshIcon">↻</span>
+                <span id="refreshText">Refresh</span>
+            </button>
+            <div id="lastUpdated" class="last-updated"></div>
+        </header>
+
+        <main>
+            <div class="sources">
+                <div class="source-card">
+                    <h2>CabalSpy</h2>
+                    <div id="cabalspyLoading" class="loading">Loading...</div>
+                    <div id="cabalspyError" class="error" style="display: none;"></div>
+                    <div id="cabalspyContent" class="content" style="display: none;"></div>
+                </div>
+                
+                <div class="source-card">
+                    <h2>Kolscan</h2>
+                    <div id="kolscanLoading" class="loading">Loading...</div>
+                    <div id="kolscanError" class="error" style="display: none;"></div>
+                    <div id="kolscanContent" class="content" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="combined-results">
+                <h2>Top Token</h2>
+                <div id="topTokenCard" class="top-token-card">
+                    <div id="topTokenLoading" class="loading">Analyzing...</div>
+                    <div id="topTokenContent" style="display: none;"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sources: <a href="https://cabalspy.xyz" target="_blank">CabalSpy</a> & <a href="https://kolscan.io" target="_blank">Kolscan</a></p>
+            <p class="note">Tap refresh or pull down to update</p>
+        </footer>
+    </div>
+
+    <!-- iOS Add to Home Screen prompt -->
+    <div id="iosPrompt" class="ios-prompt" style="display: none;">
+        <p>📲 Tap <strong>Share</strong> → <strong>Add to Home Screen</strong></p>
+        <button onclick="document.getElementById('iosPrompt').style.display='none'">Close</button>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.log('❌ Service Worker registration failed:', err));
+        }
+        
+        // Show iOS prompt if applicable
+        setTimeout(() => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isSafari = navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
+            
+            if (isIOS && isSafari && !window.matchMedia('(display-mode: standalone)').matches) {
+                if (!localStorage.getItem('iOSPromptShown')) {
+                    document.getElementById('iosPrompt').style.display = 'block';
+                    localStorage.setItem('iOSPromptShown', 'true');
+                }
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
