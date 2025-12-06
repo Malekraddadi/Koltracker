@@ -34,12 +34,16 @@ class KOLTracker {
             const data = await response.json();
             console.log('✅ CabalSpy data received:', data);
             
-            // Check if it's demo data
-            const isDemo = response.headers.get('X-Source') === 'Demo-Data';
-            if (isDemo) {
-                console.log('ℹ️ Using demo data for CabalSpy');
-                errorEl.textContent = 'CabalSpy: Using demo data (API not accessible)';
+            // Check the data source
+            const source = response.headers.get('X-Source') || 'Unknown';
+            console.log('CabalSpy data source:', source);
+            
+            if (source.includes('Fallback') || source.includes('Demo')) {
+                errorEl.textContent = 'CabalSpy: Using demo data (real API blocked)';
                 errorEl.style.display = 'block';
+            } else if (source.includes('Scraped') || source.includes('Real') || source.includes('Whale')) {
+                errorEl.textContent = 'CabalSpy: Using real scraped data';
+                errorEl.style.display = 'none';
             } else {
                 errorEl.style.display = 'none';
             }
@@ -84,12 +88,16 @@ class KOLTracker {
             const data = await response.json();
             console.log('✅ Kolscan data received:', data);
             
-            // Check if it's demo data
-            const isDemo = response.headers.get('X-Source') === 'Demo-Data';
-            if (isDemo) {
-                console.log('ℹ️ Using demo data for Kolscan');
-                errorEl.textContent = 'Kolscan: Using demo data (API not accessible)';
+            // Check the data source
+            const source = response.headers.get('X-Source') || 'Unknown';
+            console.log('Kolscan data source:', source);
+            
+            if (source.includes('Fallback') || source.includes('Demo')) {
+                errorEl.textContent = 'Kolscan: Using demo data (real API blocked)';
                 errorEl.style.display = 'block';
+            } else if (source.includes('Scraped') || source.includes('Real')) {
+                errorEl.textContent = 'Kolscan: Using real scraped data';
+                errorEl.style.display = 'none';
             } else {
                 errorEl.style.display = 'none';
             }
